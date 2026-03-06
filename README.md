@@ -28,13 +28,13 @@ The project currently focuses on **host-based packet sniffing and filtering** wi
 
 | Epic | Goal | Status |
 |-------|------|-------|
-| 🟩 Epic 1 | Packet Capture (Passive Mode) | 🟡 |
-| 🟨 Epic 2 | Packet Parsing (L2 → L4) |🔴|
-| 🟧 Epic 3 | Stateless Rule Engine |🔴|
-| 🟥 Epic 4 | Packet Blocking (Active Mode) |🔴|
-| 🟪 Epic 5 | Stateful Inspection |🔴|
-| 🟫 Epic 6 | Logging, Metrics & Alerts |🔴|
-| ⬛ Epic 7 | Red Team Testing & Evasion |🔴|
+| Epic 1 | Packet Capture (Passive Mode) | 🟢 |
+| Epic 2 | Packet Parsing (L2 → L4) |🟡|
+| Epic 3 | Stateless Rule Engine |🔴|
+| Epic 4 | Packet Blocking (Active Mode) |🔴|
+| Epic 5 | Stateful Inspection |🔴|
+| Epic 6 | Logging, Metrics & Alerts |🔴|
+| Epic 7 | Red Team Testing & Evasion |🔴|
 
 ---
 
