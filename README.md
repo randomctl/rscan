@@ -1,12 +1,13 @@
 # rscan
 
-Rust workspace for packet capture and packet parsing experiments.
+Network scanning tool written in rust. The goal is to make an effective tool to scan a network against intruders.
+Currently doing some network research on how to achieve this.
 
-## Workspace crates
+## Crates
 
-- `rscan-core`: packet parsing primitives (Ethernet, IPv4/IPv6, TCP/UDP)
-- `rscan-runtime`: capture loop and runtime wiring
-- `rscan-cli`: command-line entry point
+- `core`: packet parsing primitives (Ethernet, IPv4/IPv6, TCP/UDP)
+- `runtime`: capture loop and runtime wiring
+- `cli`: command-line entry point
 
 ## Usage
 
