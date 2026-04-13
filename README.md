@@ -12,5 +12,5 @@ Currently doing some network research on how to achieve this.
 ## Usage
 
 ```bash
-cargo run -p rscan -- sniff
+sudo cargo run --bin rscan -- sniff
 ```
