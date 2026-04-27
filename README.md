@@ -15,10 +15,6 @@ The goal is to build an efficient network scanner for local LAN environments wit
 
 This project is currently being reorganized into a crate-based architecture.
 
-
-## Diagram
-<img width="1570" height="1392" alt="diag" src="https://github.com/user-attachments/assets/46411ea8-6a46-458f-bacc-0541a0ea8df8" /># rscan
-
 ## Crates
 
 - `core`: orchestration/runtime integration, shared models/events, config and security checks
