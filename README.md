@@ -1,17 +1,47 @@
-# rscan
+<div align="center">
+  <img width="200" height="200" alt="rscan_logo" src="https://github.com/user-attachments/assets/bf70684b-3241-47cc-9369-c8705d90bd36" />
+  <h1> rscan </h1>
+  <img src="https://github.com/randomctl/rscan/actions/workflows/rust.yml/badge.svg?branch=main" />
+  <img src="https://img.shields.io/github/last-commit/randomctl/rscan" />
+</div>
 
-Network security scanning tool written in rust. The goal is to make an efficient and effective tool to scan a network against intruders, pakcet injections and so on.
-Currently doing some network research if feasible and how to achieve this.
-Requires scanner (host/service discovery), packet inspection, detection engine.
+<br />
 
-## Crates
+`rscan` is a network security scanning tool written in Rust.
 
-- `core`: packet parsing primitives (Ethernet, IPv4/IPv6, TCP/UDP)
-- `runtime`: capture loop and runtime wiring
-- `cli`: command-line entry point
+The goal is to build an efficient network scanner for local LAN environments with:
+- host and service discovery
+- packet inspection
+- built-in threat detection
+- terminal user interface (TUI)
+
+This project is currently being reorganized into a crate-based architecture.
 
 ## Usage
 
-```bash
-sudo cargo run --bin rscan -- sniff
 ```
+usage: rscan [MODE] [OPTIONS]
+
+Arguments:
+-t, --tui           Terminal User Interface mode. (Default mode).
+-p, --passive       Passive mode. (Displaying packets metadata).
+-a, --active        Active mode (Host/port discovery).
+
+
+Options:
+-v, --verbose       Verbose output logging.
+-h, --help          Print help.
+-V, --version       Print version.
+
+Notes:
+If no mode is specified, --tui is assumed.
+ ```
+
+## Crates
+
+- `core`: orchestration/runtime integration, shared models/events, config and security checks
+- `capture`: packet capture and frame decode/parsing adapters
+- `probe`: active discovery and probing workflow (host/port scan pipeline)
+- `detect`: detection engine and rule evaluation
+- `tui`: terminal UI surface and input handling
+
