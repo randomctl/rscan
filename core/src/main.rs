@@ -2,7 +2,8 @@ use core::config::{Cli, help, usage_display, version};
 use std::process::exit;
 
 fn main() {
-    match Cli::parse() {
+    let args = std::env::args();
+    match Cli::parse(args) {
         Ok(Cli::Help) => {
             help();
             exit(0);

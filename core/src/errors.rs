@@ -1,12 +1,12 @@
 use std::fmt::{Display, Formatter, Result};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Error {
-    message: String,
-    err_type: ErrorType,
+    pub message: String,
+    pub err_type: ErrorType,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum ErrorType {
     ArgParseError,
 }

@@ -1,5 +1,6 @@
 use crate::errors::{Error, ErrorType};
 
+#[derive(Debug, PartialEq)]
 pub enum Mode {
     TUI,
     PASSIVE,
@@ -8,6 +9,7 @@ pub enum Mode {
     HELP,
 }
 
+#[derive(Debug, PartialEq)]
 pub struct Config {
     pub mode: Mode,
     pub verbose: bool,
@@ -34,6 +36,7 @@ impl Config {
     }
 }
 
+#[derive(Debug, PartialEq)]
 pub enum Cli {
     Config(Config),
     Help,
@@ -41,11 +44,13 @@ pub enum Cli {
 }
 
 impl Cli {
-    pub fn parse() -> Result<Self, Error> {
+    pub fn parse<I>(args: I) -> Result<Self, Error>
+    where
+        I: Iterator<Item = String>,
+    {
         let mut config = Config::default();
         let mut mode_set = false;
-        let args = std::env::args().skip(1);
-        for arg in args {
+        for arg in args.skip(1) {
             if arg.starts_with("--") {
                 match arg.as_str() {
                     "--version" => return Ok(Cli::Version),
@@ -127,3 +132,166 @@ pub fn intro_banner() {
     println!("RSCAN {} — Network Recon CLI\n", env!("CARGO_PKG_VERSION"));
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parse_help_success() {
+        let valid_args: Vec<Vec<&str>> = vec![
+            vec!["-h"],
+            vec!["--help"],
+            vec!["-h", "unknown_cmd"],
+            vec!["--help", "unknown_cmd"],
+        ];
+        for arg in valid_args {
+            let mut args: Vec<String> = arg.iter().map(|a| a.to_string()).collect();
+            let mut input: Vec<String> = vec!["rscan".to_string()];
+            input.append(&mut args);
+            assert_eq!(Cli::parse(input.into_iter()), Ok(Cli::Help));
+        }
+    }
+
+    #[test]
+    fn test_parse_version_success() {
+        let valid_args: Vec<Vec<&str>> = vec![
+            vec!["-V"],
+            vec!["--version"],
+            vec!["-V", "unknown_cmd"],
+            vec!["--version", "unknown_cmd"],
+        ];
+        for arg in valid_args {
+            let mut args: Vec<String> = arg.iter().map(|a| a.to_string()).collect();
+            let mut input: Vec<String> = vec!["rscan".to_string()];
+            input.append(&mut args);
+            assert_eq!(Cli::parse(input.into_iter()), Ok(Cli::Version));
+        }
+    }
+
+    #[test]
+    fn test_parse_active_success() {
+        let valid_args_no_verbose: Vec<Vec<&str>> = vec![vec!["-a"], vec!["--active"]];
+        let valid_args_verbose: Vec<Vec<&str>> = vec![
+            vec!["-av"],
+            vec!["-va"],
+            vec!["--verbose", "--active"],
+            vec!["--active", "--verbose"],
+        ];
+        for arg in valid_args_verbose {
+            let mut args: Vec<String> = arg.iter().map(|a| a.to_string()).collect();
+            let mut input: Vec<String> = vec!["rscan".to_string()];
+            input.append(&mut args);
+            assert_eq!(
+                Cli::parse(input.into_iter()),
+                Ok(Cli::Config(Config {
+                    mode: Mode::ACTIVE,
+                    verbose: true,
+                }))
+            );
+        }
+
+        for arg in valid_args_no_verbose {
+            let mut args: Vec<String> = arg.iter().map(|a| a.to_string()).collect();
+            let mut input: Vec<String> = vec!["rscan".to_string()];
+            input.append(&mut args);
+            assert_eq!(
+                Cli::parse(input.into_iter()),
+                Ok(Cli::Config(Config {
+                    mode: Mode::ACTIVE,
+                    verbose: false,
+                }))
+            );
+        }
+    }
+
+    #[test]
+    fn test_parse_tui_success() {
+        let valid_args_no_verbose: Vec<Vec<&str>> = vec![vec!["-t"], vec!["--tui"], vec![]];
+        let valid_args_verbose: Vec<Vec<&str>> = vec![
+            vec!["-tv"],
+            vec!["-vt"],
+            vec!["--verbose", "--tui"],
+            vec!["--tui", "--verbose"],
+        ];
+        for arg in valid_args_verbose {
+            let mut args: Vec<String> = arg.iter().map(|a| a.to_string()).collect();
+            let mut input: Vec<String> = vec!["rscan".to_string()];
+            input.append(&mut args);
+            assert_eq!(
+                Cli::parse(input.into_iter()),
+                Ok(Cli::Config(Config {
+                    mode: Mode::TUI,
+                    verbose: true,
+                }))
+            );
+        }
+
+        for arg in valid_args_no_verbose {
+            let mut args: Vec<String> = arg.iter().map(|a| a.to_string()).collect();
+            let mut input: Vec<String> = vec!["rscan".to_string()];
+            input.append(&mut args);
+            assert_eq!(
+                Cli::parse(input.into_iter()),
+                Ok(Cli::Config(Config {
+                    mode: Mode::TUI,
+                    verbose: false,
+                }))
+            );
+        }
+    }
+
+    #[test]
+    fn test_parse_passive_success() {
+        let valid_args_no_verbose: Vec<Vec<&str>> = vec![vec!["-p"], vec!["--passive"]];
+        let valid_args_verbose: Vec<Vec<&str>> = vec![
+            vec!["-pv"],
+            vec!["-vp"],
+            vec!["--verbose", "--passive"],
+            vec!["--passive", "--verbose"],
+        ];
+        for arg in valid_args_verbose {
+            let mut args: Vec<String> = arg.iter().map(|a| a.to_string()).collect();
+            let mut input: Vec<String> = vec!["rscan".to_string()];
+            input.append(&mut args);
+            assert_eq!(
+                Cli::parse(input.into_iter()),
+                Ok(Cli::Config(Config {
+                    mode: Mode::PASSIVE,
+                    verbose: true,
+                }))
+            );
+        }
+
+        for arg in valid_args_no_verbose {
+            let mut args: Vec<String> = arg.iter().map(|a| a.to_string()).collect();
+            let mut input: Vec<String> = vec!["rscan".to_string()];
+            input.append(&mut args);
+            assert_eq!(
+                Cli::parse(input.into_iter()),
+                Ok(Cli::Config(Config {
+                    mode: Mode::PASSIVE,
+                    verbose: false,
+                }))
+            );
+        }
+    }
+
+    #[test]
+    fn test_parse_fail() {
+        let invalid_args: Vec<Vec<&str>> = vec![
+            vec!["--unknown"], // unknown arg
+            vec!["-u"], // unknown arg
+            vec!["-avt"], // multiple modes
+            vec!["--verbose", "--passsive", "--tui"], //multiple modes
+            vec!["--tui", "--unknown"], // multiple args with unknown
+            vec!["-tvu"], // multiple args with unknown
+        ];
+        for arg in invalid_args {
+            let mut args: Vec<String> = arg.iter().map(|a| a.to_string()).collect();
+            let mut input: Vec<String> = vec!["rscan".to_string()];
+            input.append(&mut args);
+            let res = Cli::parse(input.into_iter()).err().unwrap().err_type;
+            assert_eq!(res, ErrorType::ArgParseError);
+        }
+    }
+}
