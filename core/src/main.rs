@@ -12,7 +12,9 @@ fn main() {
             version();
             exit(0);
         }
-        Ok(Cli::Config(_)) => { todo!() }
+        Ok(Cli::Config(_)) => {
+            todo!()
+        }
         Err(err) => {
             eprintln!("{}", err);
             usage_display();

@@ -1,6 +1,7 @@
 use std::fmt;
 
 #[repr(C)]
+#[derive(Debug, PartialEq)]
 pub struct UdpHeader<'a> {
     pub src_port: u16,
     pub dst_port: u16,
@@ -44,5 +45,36 @@ impl fmt::Display for UdpHeader<'_> {
             "UDP Header:\nSource Port: {}\nDestination Port: {}",
             self.src_port, self.dst_port
         )
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::packet::PacketError;
+
+    #[test]
+    fn udp_parse_success() {
+        let header: &[u8; _] = &[0x00, 0x1A, 0x2B, 0x3C, 0x00, 0x3C, 0x2B, 0x1A];
+
+        let expected = UdpHeader {
+            src_port: 0x001A,
+            dst_port: 0x2B3C,
+            data: &[][..],
+        };
+
+        assert_eq!(UdpHeader::parse(header), Ok(expected));
+    }
+
+    #[test]
+    fn udp_min_len_fail() {
+        let header: &[u8] = &[][..];
+        let err = PacketError::InvalidHeaderLength {
+            header: "udp",
+            min: 8,
+            actual: 0,
+        };
+
+        assert_eq!(UdpHeader::parse(header), Err(err));
     }
 }

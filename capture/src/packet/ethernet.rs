@@ -83,11 +83,10 @@ mod tests {
 
     #[test]
     fn eth_header_parse_success() {
-        // 00 1A 2B 3C 4D 5E 00 5E 4D 3C 2B 1A 08 00
-        let header: &[u8; _] = &[0, 26, 43, 60, 77, 94, 0, 94, 77, 60, 43, 26, 8, 0];
+        let header: &[u8; _] = &[0x00, 0x1A, 0x2B, 0x3C, 0x4D, 0x5E, 0x00, 0x5E, 0x4D, 0x3C, 0x2B, 0x1A, 0x08, 0x00];
         let expected = EthernetHeader {
-            dst: [0, 26, 43, 60, 77, 94],
-            src: [0, 94, 77, 60, 43, 26],
+            dst: [0, 0x1A, 0x2B, 0x3C, 0x4D, 0x5E],
+            src: [0, 0x5E, 0x4D, 0x3C, 0x2B, 0x1A],
             ether_type: EtherType::IPv4,
             payload: &[][..],
         };
@@ -107,8 +106,8 @@ mod tests {
 
     #[test]
     fn eth_wrong_eth_type() {
-        // 00 1A 2B 3C 4D 5E 00 5E 4D 3C 2B 1A 08 00
-        let header: &[u8; _] = &[0, 26, 43, 60, 77, 94, 0, 94, 77, 60, 43, 26, 7, 0];
+        let header: &[u8; _] = &[0x00, 0x1A, 0x2B, 0x3C, 0x4D, 0x5E, 0x00, 0x5E, 0x4D, 0x3C, 0x2B, 0x1A, 0x07, 0x00];
+
         let err = PacketError::UnsupportedFieldType {
             header: "ip",
             field: String::from("0x0700"),

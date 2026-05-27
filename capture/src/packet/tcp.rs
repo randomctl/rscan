@@ -1,6 +1,7 @@
 use std::fmt;
 
 #[repr(C)]
+#[derive(Debug, PartialEq)]
 pub struct TcpHeader<'a> {
     pub src_port: u16,
     pub dst_port: u16,
@@ -59,5 +60,42 @@ impl fmt::Display for TcpHeader<'_> {
             "TCP Header:\nSource Port: {}\nDestination Port: {}\nSequence Num: {}\nAck Num: {}",
             self.src_port, self.dst_port, self.seq_num, self.ack_num
         )
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::packet::PacketError;
+
+    #[test]
+    fn tcp_header_parse_success() {
+        let header: &[u8; _] = &[
+            0x00, 0x1A, 0x2B, 0x3C, 0x4D, 0x5E, 0x6F, 0x7A, 0x8B, 0x00, 0x8B, 0x7A, 0x6F, 0x5E,
+            0x4D, 0x3C, 0x2B, 0x1A, 0x01, 0x02,
+        ];
+
+        let expected = TcpHeader {
+            src_port: 0x1A,
+            dst_port: 0x2B3C,
+            seq_num: 0x4D5E6F7A,
+            ack_num: 0x8B008B7A,
+            data: &[][..],
+        };
+
+        assert_eq!(TcpHeader::parse(header), Ok(expected));
+    }
+
+    #[test]
+    fn tcp_header_min_len_fail() {
+        let header: &[u8] = &[][..];
+
+        let err = PacketError::InvalidHeaderLength {
+            header: "tcp",
+            min: 20,
+            actual: 0,
+        };
+
+        assert_eq!(TcpHeader::parse(header), Err(err));
     }
 }
