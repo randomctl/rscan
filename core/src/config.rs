@@ -41,6 +41,7 @@ pub enum Cli {
     Config(Config),
     Help,
     Version,
+    ListDevices,
 }
 
 impl Cli {
@@ -59,6 +60,7 @@ impl Cli {
                     "--passive" => config.set_mode(&mut mode_set, Mode::PASSIVE)?,
                     "--active" => config.set_mode(&mut mode_set, Mode::ACTIVE)?,
                     "--verbose" => config.verbose = true,
+                    "--list-devices" => return Ok(Cli::ListDevices),
                     _ => {
                         return Err(Error::err(
                             ErrorType::ArgParseError,
@@ -75,6 +77,7 @@ impl Cli {
                         'p' => config.set_mode(&mut mode_set, Mode::PASSIVE)?,
                         'a' => config.set_mode(&mut mode_set, Mode::ACTIVE)?,
                         'v' => config.verbose = true,
+                        'l' => return Ok(Cli::ListDevices),
                         _ => {
                             return Err(Error::err(
                                 ErrorType::ArgParseError,
@@ -95,15 +98,16 @@ pub fn usage_display() {
         "usage: rscan [MODE] [OPTIONS]
 
         Arguments:
-        -t, --tui           Terminal User Interface mode. (Default mode).
-        -p, --passive       Passive mode. (Displaying packets metadata).
-        -a, --active        Active mode (Host/port discovery).
+        -t, --tui               Terminal User Interface mode. (Default mode).
+        -p, --passive           Passive mode. (Displaying packets metadata).
+        -a, --active            Active mode (Host/port discovery).
+        -l, --list-devices      List available network devices.
 
 
         Options:
-        -v, --verbose       Verbose output logging.
-        -h, --help          Print help.
-        -V, --version       Print version.
+        -v, --verbose           Verbose output logging.
+        -h, --help              Print help.
+        -V, --version           Print version.
 
         Notes:
         If no mode is specified, --tui is assumed.\n"

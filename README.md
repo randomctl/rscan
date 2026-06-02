@@ -23,15 +23,15 @@ This project is currently being reorganized into a crate-based architecture.
 usage: rscan [MODE] [OPTIONS]
 
 Arguments:
--t, --tui           Terminal User Interface mode. (Default mode).
--p, --passive       Passive mode. (Displaying packets metadata).
--a, --active        Active mode (Host/port discovery).
-
-
+-t,  --tui           Terminal User Interface mode. (Default mode).
+-p,  --passive       Passive mode. (Displaying packets metadata).
+-a,  --active        Active mode (Host/port discovery).
+-l,  --list-devices  List all the devices available
+.
 Options:
--v, --verbose       Verbose output logging.
--h, --help          Print help.
--V, --version       Print version.
+-v,  --verbose       Verbose output logging.
+-h,  --help          Print help.
+-V,  --version       Print version.
 
 Notes:
 If no mode is specified, --tui is assumed.
