@@ -280,6 +280,22 @@ mod tests {
     }
 
     #[test]
+    fn test_list_success() {
+        let valid_args: Vec<Vec<&str>> = vec![
+            vec!["-l"],
+            vec!["--list-devices"],
+            vec!["-l", "unknown_cmd"],
+            vec!["--list-devices", "unknown_cmd"],
+        ];
+        for arg in valid_args {
+            let mut args: Vec<String> = arg.iter().map(|a| a.to_string()).collect();
+            let mut input: Vec<String> = vec!["rscan".to_string()];
+            input.append(&mut args);
+            assert_eq!(Cli::parse(input.into_iter()), Ok(Cli::ListDevices));
+        }
+    }
+
+    #[test]
     fn test_parse_fail() {
         let invalid_args: Vec<Vec<&str>> = vec![
             vec!["--unknown"],                        // unknown arg
