@@ -11,3 +11,4 @@ name = "rscan"
 path = "src/main.rs"
 
 [dependencies]
+capture = {path = "../capture"}

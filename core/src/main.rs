@@ -1,6 +1,8 @@
 use core::config::{Cli, help, usage_display, version};
 use std::process::exit;
 
+use capture::sniff::Sniffer;
+
 fn main() {
     let args = std::env::args();
     match Cli::parse(args) {
@@ -10,6 +12,10 @@ fn main() {
         }
         Ok(Cli::Version) => {
             version();
+            exit(0);
+        }
+        Ok(Cli::ListDevices) => {
+            Sniffer::list_devices();
             exit(0);
         }
         Ok(Cli::Config(_)) => {

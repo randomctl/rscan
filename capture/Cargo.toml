@@ -7,3 +7,4 @@ edition = "2024"
 doctest = false
 
 [dependencies]
+pcap = { workspace = true }
