@@ -13,11 +13,13 @@ impl Sniffer {
         match Device::list() {
             Ok(devices) => {
                 for device in devices {
-                    print!("Device: {}", device.name);
-                    for addr in device.addresses {
-                        print!(" addr: {}", addr.addr);
+                    if !device.addresses.is_empty() {
+                        print!("Device: {}", device.name);
+                        for addr in device.addresses {
+                            print!(" addr: {}", addr.addr);
+                        }
+                        print!("\n");
                     }
-                    print!("\n");
                 }
             }
             Err(_) => {
