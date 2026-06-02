@@ -26,12 +26,12 @@ Arguments:
 -t,  --tui           Terminal User Interface mode. (Default mode).
 -p,  --passive       Passive mode. (Displaying packets metadata).
 -a,  --active        Active mode (Host/port discovery).
--l,  --list-devices  List all the devices available
-.
+
 Options:
 -v,  --verbose       Verbose output logging.
 -h,  --help          Print help.
 -V,  --version       Print version.
+-l,  --list-devices  List all the devices available
 
 Notes:
 If no mode is specified, --tui is assumed.

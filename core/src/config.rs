@@ -101,14 +101,13 @@ pub fn usage_display() {
         -t, --tui               Terminal User Interface mode. (Default mode).
         -p, --passive           Passive mode. (Displaying packets metadata).
         -a, --active            Active mode (Host/port discovery).
-        -l, --list-devices      List available network devices.
-
 
         Options:
         -v, --verbose           Verbose output logging.
         -h, --help              Print help.
         -V, --version           Print version.
-
+        -l, --list-devices      List available network devices
+        .
         Notes:
         If no mode is specified, --tui is assumed.\n"
     );
