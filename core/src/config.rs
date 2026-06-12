@@ -1,4 +1,5 @@
-use crate::errors::{Error, ErrorType};
+use crate::errors::CoreError;
+use anyhow::Result;
 
 #[derive(Debug, PartialEq)]
 pub enum Mode {
@@ -23,12 +24,11 @@ impl Config {
         }
     }
 
-    fn set_mode(&mut self, mode_set: &mut bool, new_mode: Mode) -> Result<(), Error> {
+    fn set_mode(&mut self, mode_set: &mut bool, new_mode: Mode) -> Result<()> {
         if *mode_set {
-            return Err(Error::err(
-                ErrorType::ArgParseError,
-                "Multiple modes specified, only one is supported".to_string(),
-            ));
+            Err(CoreError::ArgParseError(
+                "multiple modes specified.".to_string(),
+            ))?
         }
         self.mode = new_mode;
         *mode_set = true;
@@ -45,7 +45,7 @@ pub enum Cli {
 }
 
 impl Cli {
-    pub fn parse<I>(args: I) -> Result<Self, Error>
+    pub fn parse<I>(args: I) -> Result<Self>
     where
         I: Iterator<Item = String>,
     {
@@ -61,12 +61,7 @@ impl Cli {
                     "--active" => config.set_mode(&mut mode_set, Mode::ACTIVE)?,
                     "--verbose" => config.verbose = true,
                     "--list-devices" => return Ok(Cli::ListDevices),
-                    _ => {
-                        return Err(Error::err(
-                            ErrorType::ArgParseError,
-                            "Unknown argument.".to_string(),
-                        ));
-                    }
+                    _ => Err(CoreError::ArgParseError("unknown argument".to_string()))?,
                 }
             } else if arg.starts_with("-") {
                 for ch in arg.chars().skip(1) {
@@ -78,12 +73,7 @@ impl Cli {
                         'a' => config.set_mode(&mut mode_set, Mode::ACTIVE)?,
                         'v' => config.verbose = true,
                         'l' => return Ok(Cli::ListDevices),
-                        _ => {
-                            return Err(Error::err(
-                                ErrorType::ArgParseError,
-                                "Unknown argument.".to_string(),
-                            ));
-                        }
+                        _ => Err(CoreError::ArgParseError("Unknown argument.".to_string()))?,
                     }
                 }
             } else {
@@ -151,7 +141,7 @@ mod tests {
             let mut args: Vec<String> = arg.iter().map(|a| a.to_string()).collect();
             let mut input: Vec<String> = vec!["rscan".to_string()];
             input.append(&mut args);
-            assert_eq!(Cli::parse(input.into_iter()), Ok(Cli::Help));
+            assert_eq!(Cli::parse(input.into_iter()).unwrap(), Cli::Help);
         }
     }
 
@@ -167,7 +157,7 @@ mod tests {
             let mut args: Vec<String> = arg.iter().map(|a| a.to_string()).collect();
             let mut input: Vec<String> = vec!["rscan".to_string()];
             input.append(&mut args);
-            assert_eq!(Cli::parse(input.into_iter()), Ok(Cli::Version));
+            assert_eq!(Cli::parse(input.into_iter()).unwrap(), Cli::Version);
         }
     }
 
@@ -185,11 +175,11 @@ mod tests {
             let mut input: Vec<String> = vec!["rscan".to_string()];
             input.append(&mut args);
             assert_eq!(
-                Cli::parse(input.into_iter()),
-                Ok(Cli::Config(Config {
+                Cli::parse(input.into_iter()).unwrap(),
+                Cli::Config(Config {
                     mode: Mode::ACTIVE,
                     verbose: true,
-                }))
+                })
             );
         }
 
@@ -198,11 +188,11 @@ mod tests {
             let mut input: Vec<String> = vec!["rscan".to_string()];
             input.append(&mut args);
             assert_eq!(
-                Cli::parse(input.into_iter()),
-                Ok(Cli::Config(Config {
+                Cli::parse(input.into_iter()).unwrap(),
+                Cli::Config(Config {
                     mode: Mode::ACTIVE,
                     verbose: false,
-                }))
+                })
             );
         }
     }
@@ -221,11 +211,11 @@ mod tests {
             let mut input: Vec<String> = vec!["rscan".to_string()];
             input.append(&mut args);
             assert_eq!(
-                Cli::parse(input.into_iter()),
-                Ok(Cli::Config(Config {
+                Cli::parse(input.into_iter()).unwrap(),
+                Cli::Config(Config {
                     mode: Mode::TUI,
                     verbose: true,
-                }))
+                })
             );
         }
 
@@ -234,11 +224,11 @@ mod tests {
             let mut input: Vec<String> = vec!["rscan".to_string()];
             input.append(&mut args);
             assert_eq!(
-                Cli::parse(input.into_iter()),
-                Ok(Cli::Config(Config {
+                Cli::parse(input.into_iter()).unwrap(),
+                Cli::Config(Config {
                     mode: Mode::TUI,
                     verbose: false,
-                }))
+                })
             );
         }
     }
@@ -257,11 +247,11 @@ mod tests {
             let mut input: Vec<String> = vec!["rscan".to_string()];
             input.append(&mut args);
             assert_eq!(
-                Cli::parse(input.into_iter()),
-                Ok(Cli::Config(Config {
+                Cli::parse(input.into_iter()).unwrap(),
+                Cli::Config(Config {
                     mode: Mode::PASSIVE,
                     verbose: true,
-                }))
+                })
             );
         }
 
@@ -270,11 +260,11 @@ mod tests {
             let mut input: Vec<String> = vec!["rscan".to_string()];
             input.append(&mut args);
             assert_eq!(
-                Cli::parse(input.into_iter()),
-                Ok(Cli::Config(Config {
+                Cli::parse(input.into_iter()).unwrap(),
+                Cli::Config(Config {
                     mode: Mode::PASSIVE,
                     verbose: false,
-                }))
+                })
             );
         }
     }
@@ -291,7 +281,7 @@ mod tests {
             let mut args: Vec<String> = arg.iter().map(|a| a.to_string()).collect();
             let mut input: Vec<String> = vec!["rscan".to_string()];
             input.append(&mut args);
-            assert_eq!(Cli::parse(input.into_iter()), Ok(Cli::ListDevices));
+            assert_eq!(Cli::parse(input.into_iter()).unwrap(), Cli::ListDevices);
         }
     }
 
@@ -309,8 +299,11 @@ mod tests {
             let mut args: Vec<String> = arg.iter().map(|a| a.to_string()).collect();
             let mut input: Vec<String> = vec!["rscan".to_string()];
             input.append(&mut args);
-            let res = Cli::parse(input.into_iter()).err().unwrap().err_type;
-            assert_eq!(res, ErrorType::ArgParseError);
+            let res = Cli::parse(input.into_iter()).err().unwrap();
+            assert!(matches!(
+                res.downcast_ref::<CoreError>(),
+                Some(CoreError::ArgParseError(_))
+            ));
         }
     }
 }

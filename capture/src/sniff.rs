@@ -1,4 +1,5 @@
-use crate::errors::{Error, ErrorType};
+use crate::errors::CaptureError;
+use anyhow::Result;
 use pcap::Device;
 
 #[derive(Debug)]
@@ -8,43 +9,20 @@ pub struct Sniffer {
 
 impl Sniffer {
     // TODO: Manage errors in a better way.
-    pub fn new(device_name: Option<&str>) -> Result<Self, Error> {
+    pub fn new(device_name: Option<&str>) -> Result<Self> {
         let device: Device = match device_name {
             Some(name) => {
-                let devices = Device::list().map_err(|_| {
-                    Error::err(
-                        ErrorType::DeviceError,
-                        String::from("Unable to list devices from pcap."),
-                    )
-                })?;
+                let devices = Device::list().map_err(|_| CaptureError::PcapError)?;
 
                 let device = devices
                     .into_iter()
                     .find(|device| device.name == name)
-                    .ok_or_else(|| {
-                        Error::err(
-                            ErrorType::DeviceError,
-                            format!("No device found with device name {}", name),
-                        )
-                    })?;
+                    .ok_or_else(|| CaptureError::NoDeviceFound)?;
 
                 device
             }
             None => {
-                match Device::lookup().map_err(|_| {
-                    Error::err(
-                        ErrorType::DeviceError,
-                        String::from("Unable to lookup for devices using pcap."),
-                    )
-                })? {
-                    Some(device) => device,
-                    None => {
-                        return Err(Error::err(
-                            ErrorType::DeviceError,
-                            String::from("No default device found."),
-                        ));
-                    }
-                }
+                Device::lookup().map_err(|_| CaptureError::PcapError)?.ok_or_else(|| CaptureError::NoDeviceFound)?
             }
         };
         Ok(Sniffer { device: device })

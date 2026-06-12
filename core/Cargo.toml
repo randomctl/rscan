@@ -12,3 +12,5 @@ path = "src/main.rs"
 
 [dependencies]
 capture = {path = "../capture"}
+thiserror = { workspace = true }
+anyhow = { workspace = true }

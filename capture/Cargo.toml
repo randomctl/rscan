@@ -8,3 +8,5 @@ doctest = false
 
 [dependencies]
 pcap = { workspace = true }
+thiserror = { workspace = true }
+anyhow = { workspace = true }
