@@ -5,8 +5,11 @@ build:
 test: build
     cargo test
 
-unit-all: build
+unit: build
     cargo test --lib
+
+unit-all: build
+    cargo test --lib -- --include-ignored
 
 pktest target: build
     cargo test --package {{target}}

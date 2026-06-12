@@ -51,7 +51,7 @@ jobs:
 
     # Tests
     - name: Run unit tests
-      run: just unit-all
+      run: just unit
 
     # Run coverage check, keeping 0 for now
     - name: Run coverage check
