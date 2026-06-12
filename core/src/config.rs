@@ -73,7 +73,7 @@ impl Cli {
                         'a' => config.set_mode(&mut mode_set, Mode::ACTIVE)?,
                         'v' => config.verbose = true,
                         'l' => return Ok(Cli::ListDevices),
-                        _ => Err(CoreError::ArgParseError("Unknown argument.".to_string()))?,
+                        _ => Err(CoreError::ArgParseError("unknown argument.".to_string()))?,
                     }
                 }
             } else {
